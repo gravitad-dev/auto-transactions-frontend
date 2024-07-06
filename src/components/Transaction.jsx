@@ -2,21 +2,8 @@ import { useState } from "react";
 import Card from "@/components/Card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import { NETWORKS } from "../networksList";
 
-const NETWORKS = [
-  {
-    name: "Mumbai Testnet",
-    rpcUrl: "https://rpc-mumbai.maticvigil.com/",
-    chainId: 80001,
-    tokenName: "MATIC",
-  },
-  {
-    name: "Ethereum Mainnet",
-    rpcUrl: "https://mainnet.infura.io/v3/YOUR_INFURA_KEY",
-    chainId: 1,
-    tokenName: "ETH",
-  },
-];
 
 function TransactionForm() {
   const [transactionType, setTransactionType] = useState("oneToOne");

@@ -2,21 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import Card from "@/components/Card";
 import { useToast } from "@/components/ui/use-toast";
-
-const NETWORKS = [
-  {
-    name: "Mumbai Testnet",
-    rpcUrl: "https://rpc-mumbai.maticvigil.com/",
-    chainId: 80001,
-    tokenName: "MATIC",
-  },
-  {
-    name: "Ethereum Mainnet",
-    rpcUrl: "https://mainnet.infura.io/v3/YOUR_INFURA_KEY",
-    chainId: 1,
-    tokenName: "ETH",
-  },
-];
+import { NETWORKS } from "../networksList";
 
 /*
 const resBalances = [
