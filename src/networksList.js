@@ -1,9 +1,9 @@
 export const NETWORKS = [
     {
-        name: "Polygon testnet",
-        rpcUrl: "https://polygon-mumbai.drpc.org",
-        chainId: 80001,
-        tokenName: "MATIC",
+        name: "Polygon zkEVM Cardona Testnet",
+        rpcUrl: "https://etherscan.cardona.zkevm-rpc.com",
+        chainId: 2442,
+        tokenName: "ETH",
     },
     {
         name: "Ethereum Mainnet",
