@@ -1,7 +1,7 @@
 export const NETWORKS = [
     {
-        name: "Mumbai Testnet",
-        rpcUrl: "https://rpc-mumbai.maticvigil.com/",
+        name: "Polygon testnet",
+        rpcUrl: "https://polygon-mumbai.drpc.org",
         chainId: 80001,
         tokenName: "MATIC",
     },
