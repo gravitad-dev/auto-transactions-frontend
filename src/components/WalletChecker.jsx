@@ -1,35 +1,27 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import Card from "@/components/Card";
 import { useToast } from "@/components/ui/use-toast";
 import { NETWORKS } from "../networksList";
+import io from "socket.io-client";
 
-/*
-const resBalances = [
-  { id: 1, address: "0x34234234gf234453g32134123414", balance: 0.2 },
-  { id: 1, address: "0x34234234gf234453g32134123414", balance: 0.2 },
-  { id: 1, address: "0x34234234gf234453g32134123414", balance: 0.2 },
-  { id: 1, address: "0x34234234gf234453g32134123414", balance: 0.2 },
-  { id: 1, address: "0x34234234gf234453g32134123414", balance: 0.2 },
-  { id: 1, address: "0x34234234gf234453g32134123414", balance: 0.2 },
-  { id: 1, address: "0x34234234gf234453g32134123414", balance: 0.2 },
-  { id: 1, address: "0x34234234gf234453g32134123414", balance: 0.2 },
-  { id: 1, address: "0x34234234gf234453g32134123414", balance: 0.2 },
-  { id: 1, address: "0x34234234gf234453g32134123414", balance: 0.2 },
-  { id: 1, address: "0x34234234gf234453g32134123414", balance: 0.2 },
-  { id: 1, address: "0x34234234gf234453g32134123414", balance: 0.2 },
-  { id: 1, address: "0x34234234gf234453g32134123414", balance: 0.2 },
-  { id: 1, address: "0x34234234gf234453g32134123414", balance: 0.2 },
-  { id: 1, address: "0x34234234gf234453g32134123414", balance: 0.2 },
-  { id: 1, address: "0x34234234gf234453g32134123414", balance: 0.2 },
-];
-*/
+const socket = io(import.meta.env.VITE_BACK_URL);
 
 function WalletChecker() {
   const [file, setFile] = useState(null);
   const [balances, setBalances] = useState([]);
   const [network, setNetwork] = useState(NETWORKS[0]);
   const { toast } = useToast();
+
+  useEffect(() => {
+    socket.on("balanceUpdate", (balance) => {
+      setBalances((prevBalances) => [...prevBalances, balance]);
+    });
+
+    return () => {
+      socket.off("balanceUpdate");
+    };
+  }, []);
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
@@ -48,28 +40,22 @@ function WalletChecker() {
       return;
     }
 
-    const formData = new FormData();
-    formData.append("wallets", file);
-    formData.append("rpcUrl", network.rpcUrl);
-    formData.append("chainId", network.chainId);
-    formData.append("tokenName", network.tokenName);
-
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACK_URL}/checkBalances`, {
-        method: "POST",
-        body: formData,
+      setBalances([]);
+      const fileText = await file.text();
+      const wallets = JSON.parse(fileText);
+
+      socket.emit("startBalanceCheck", {
+        wallets: wallets,
+        rpcUrl: network.rpcUrl,
+        chainId: network.chainId,
+        tokenName: network.tokenName,
       });
 
-      if (response.ok) {
-        const resBalances = await response.json();
-        // Aquí puedes mostrar los balances en la interfaz de usuario
-        setBalances(resBalances);
-      } else {
-        toast({
-          title: "Hubo un error al enviar la solicitud.",
-          description: "",
-        });
-      }
+      toast({
+        title: "Consulta de saldo realizada correctamente!",
+        description: `Wallets consultadas: ${wallets.length}`,
+      });
     } catch (error) {
       toast({
         title: "Error al enviar la solicitud:",
@@ -77,22 +63,21 @@ function WalletChecker() {
       });
     }
   };
-
   return (
     <Card title={"Comprobador de Saldo de Billeteras"}>
-      <div className="flex flex-col gap-16">
-        <form onSubmit={handleSubmit} className="flex flex-col w-full  gap-4">
-          <div className="flex flex-col gap-1">
+      <div className='flex flex-col gap-16'>
+        <form onSubmit={handleSubmit} className='flex flex-col w-full  gap-4'>
+          <div className='flex flex-col gap-1'>
             <label>Archivo de Billeteras:</label>
-            <input type="file" onChange={handleFileChange} />
+            <input type='file' onChange={handleFileChange} />
           </div>
 
-          <div className="flex flex-col gap-1">
+          <div className='flex flex-col gap-1'>
             <label>Network:</label>
             <select
               value={network.name}
               onChange={handleNetChange}
-              className="border h-[40px] px-2"
+              className='border h-[40px] px-2'
             >
               {NETWORKS.map((net) => (
                 <option key={net.name} value={net.name}>
@@ -102,14 +87,17 @@ function WalletChecker() {
             </select>
           </div>
 
-          <Button type="submit">Comprobar</Button>
+          <Button type='submit'>Comprobar</Button>
         </form>
 
-        <div className="flex flex-col w-full gap-2 max-h-[400px]">
-          <h3 className="font-semibold">Saldo de las Billeteras:</h3>
-          <div className="bg-gray-800 min-h-[200px] rounded-md flex flex-col gap-2 w-full text-white p-2 overflow-y-scroll">
+        <div className='flex flex-col gap-2 w-full max-h-[400px]'>
+          <h3 className='font-semibold'>Saldo de las Billeteras:</h3>
+          <div className='bg-gray-800 min-h-[368px] rounded-md flex flex-col gap-2 w-full text-white p-2 overflow-y-scroll'>
             {balances.map((wallet) => (
-              <div key={wallet.id} className=" bg-gray-700 rounded-sm p-2 ">
+              <div
+                key={wallet.address}
+                className=' bg-gray-700 rounded-sm p-2 '
+              >
                 <p>ID: {wallet.id}</p>
                 <p>Address: {wallet.address}</p>
                 <p>Balance: {wallet.balance}</p>
