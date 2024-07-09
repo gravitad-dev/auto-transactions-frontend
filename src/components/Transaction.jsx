@@ -3,13 +3,20 @@ import Card from "@/components/Card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { NETWORKS } from "../networksList";
+import { useTrasactionStore } from "../stores/transaction.store";
+import { Skeleton } from "@/components/ui/skeleton";
 import io from "socket.io-client";
 
 const socket = io(import.meta.env.VITE_BACK_URL);
 
 function TransactionForm() {
   const { toast } = useToast();
-  const [totalWallets, setTotalWallets] = useState(0);
+  const [totalTransfers, setTotalTransfers] = useState(0);
+
+  //store
+  const history = useTrasactionStore((state) => state.history);
+  const setHistory = useTrasactionStore((state) => state.setHistory);
+  const cleanHistory = useTrasactionStore((state) => state.cleanHistory);
 
   //form
   const [transactionType, setTransactionType] = useState("oneToOne");
@@ -25,13 +32,13 @@ function TransactionForm() {
 
   useEffect(() => {
     socket.on("transactionUpdate", (transaction) => {
-      console.log(transaction);
+      setHistory(transaction);
       toast({
         variant: transaction.status == "Error" ? "destructive" : "default",
         title: `Transacción a Wallet-ID: ${transaction.id} | ${
           transaction.status
         } ${transaction.status == "Success" && "✅"} `,
-        description: `Hash: ${transaction.hash.slice(0, 20) || "error"}...`,
+        description: `Hash: ${transaction.hash?.slice(0, 20) || "error"}...`,
       });
     });
 
@@ -40,12 +47,24 @@ function TransactionForm() {
     };
   }, []);
 
+  useEffect(() => {
+    if (history.length > 0 && totalTransfers === history.length) {
+      handleClean();
+    }
+  }, [history, totalTransfers]);
+
   const handleNetChange = (event) => {
     const netValue = NETWORKS.find((net) => net.name == event.target.value);
     setNetwork(netValue);
   };
 
+  const handleClean = () => {
+    setTotalTransfers(0);
+    cleanHistory();
+  };
+
   const handleSubmit = async (event) => {
+    handleClean();
     event.preventDefault();
     if (!walletsFile) {
       alert("Por favor, sube el json de las wallets.");
@@ -55,6 +74,20 @@ function TransactionForm() {
     try {
       const fileText = await walletsFile.text();
       const walletFile = JSON.parse(fileText);
+
+      switch (transactionType) {
+        case "oneToOne":
+          setTotalTransfers(1);
+          break;
+        case "oneToMany":
+          setTotalTransfers(Math.abs(receiverIdStart - receiverIdEnd) + 1);
+          break;
+        case "manyToOne":
+          setTotalTransfers(Math.abs(senderIdStart - senderIdEnd) + 1);
+          break;
+        default:
+          break;
+      }
 
       let data = {
         type: transactionType,
@@ -83,6 +116,8 @@ function TransactionForm() {
       });
     }
   };
+
+  console.log({ totalTransfers, history });
 
   return (
     <Card title={"Hacer transaciones"}>
@@ -205,7 +240,14 @@ function TransactionForm() {
           onChange={(e) => setWalletsFile(e.target.files[0])}
           required
         />
-        <Button type='submit'>Enviar</Button>
+
+        {totalTransfers == history.length ? (
+          <Button type='submit'>Enviar</Button>
+        ) : (
+          <Skeleton className='flex justify-center items-center w-full h-[40px] rounded-md'>
+            {`Realizadas ${history.length} de ${totalTransfers}`}
+          </Skeleton>
+        )}
       </form>
     </Card>
   );
