@@ -14,11 +14,11 @@ function App() {
     const socket = io(import.meta.env.VITE_BACK_URL);
 
     socket.on("connect", () => {
-      console.log("Conectado al servidor de sockets");
+      console.log("Conectado al servidor");
     });
 
     socket.on("disconnect", () => {
-      console.log("Desconectado del servidor de sockets");
+      console.log("Desconectado del servidor");
     });
 
     return () => {
