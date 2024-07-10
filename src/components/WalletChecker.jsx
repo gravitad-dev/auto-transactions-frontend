@@ -5,6 +5,7 @@ import Card from "@/components/Card";
 import { useToast } from "@/components/ui/use-toast";
 import { NETWORKS } from "../networksList";
 import { useWalletStore } from "../stores/wallet.store";
+import { processFile } from "../utils";
 import io from "socket.io-client";
 
 const socket = io(import.meta.env.VITE_BACK_URL);
@@ -35,7 +36,7 @@ function WalletChecker() {
     };
   }, []);
 
-  //update progress
+  // reset progress
   useEffect(() => {
     if (balances.length > 0 && totalWallets === balances.length) {
       toast({
@@ -47,7 +48,7 @@ function WalletChecker() {
     }
   }, [balances]);
 
-  //-------------------------------------------------------------------------
+  //handler functions
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
   };
@@ -74,8 +75,7 @@ function WalletChecker() {
     handleClean();
 
     try {
-      const fileText = await file.text();
-      const walletFile = JSON.parse(fileText);
+      const walletFile = await processFile(file);
       setTotalWallets(walletFile.length);
 
       socket.emit("startBalanceCheck", {
@@ -132,7 +132,7 @@ function WalletChecker() {
         </form>
 
         {/* LOG CONSOLE */}
-        <div className='flex flex-col gap-2 w-full max-h-[400px]'>
+        <div className='flex flex-col gap-2 w-full max-h-[500px] md:max-h-[400px]'>
           <div className='flex justify-between items-center'>
             <h3 className='font-semibold'>Saldo de billeteras</h3>
 
@@ -140,7 +140,7 @@ function WalletChecker() {
               Borrar Historial
             </Button>
           </div>
-          <div className='bg-gray-800 min-h-[480px] rounded-md flex flex-col gap-2 w-full text-white p-2 overflow-y-scroll'>
+          <div className='bg-gray-800 md:min-h-[500px] rounded-md flex flex-col gap-2 w-full text-white p-2 overflow-y-scroll'>
             {savedBalances.map((wallet) => (
               <div
                 key={wallet.address}

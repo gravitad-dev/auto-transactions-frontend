@@ -6,8 +6,6 @@ import Card from "./components/Card";
 import { Toaster } from "@/components/ui/toaster";
 import io from "socket.io-client";
 
-const socket = io(import.meta.env.VITE_BACK_URL);
-
 //MAIN APP
 function App() {
   useEffect(() => {
@@ -27,7 +25,7 @@ function App() {
   }, []);
 
   return (
-    <div className='grid grid-cols-1 lg:grid-cols-3 gap-4 px-4 bg-gray-100 h-[100vh]'>
+    <div className='grid grid-cols-1 lg:grid-cols-3 gap-4 px-4 bg-gray-100 h-auto md:h-[100vh]'>
       <div className='col-span-1 md:col-span-3'>
         {/*
         <Card></Card>

@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import Card from "@/components/Card";
+import OperationHistory from "./OperationHistory";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { NETWORKS } from "../networksList";
 import { useTrasactionStore } from "../stores/transaction.store";
 import { Skeleton } from "@/components/ui/skeleton";
+import { processFile } from "../utils";
 import io from "socket.io-client";
 
 const socket = io(import.meta.env.VITE_BACK_URL);
@@ -18,9 +20,6 @@ function TransactionForm() {
   const setHistory = useTrasactionStore((state) => state.setHistory);
   const cleanHistory = useTrasactionStore((state) => state.cleanHistory);
   const savedHistory = useTrasactionStore((state) => state.savedHistory);
-  const cleanSavedHistory = useTrasactionStore(
-    (state) => state.cleanSavedHistory
-  );
 
   //form
   const [transactionType, setTransactionType] = useState("oneToOne");
@@ -45,10 +44,9 @@ function TransactionForm() {
     };
   }, []);
 
-  //status
+  // reset progress
   useEffect(() => {
     if (history.length > 0 && totalTransfers === history.length) {
-      console.log(savedHistory);
       toast({
         title: "Operación Finalizada ✅",
         description: `${history.length} de ${totalTransfers}`,
@@ -58,7 +56,7 @@ function TransactionForm() {
     }
   }, [history]);
 
-  //-------------------------------------------------------------
+  //handler functions
   const handleNetChange = (event) => {
     const netValue = NETWORKS.find((net) => net.name == event.target.value);
     setNetwork(netValue);
@@ -81,8 +79,7 @@ function TransactionForm() {
     }
 
     try {
-      const fileText = await walletsFile.text();
-      const walletFile = JSON.parse(fileText);
+      const walletFile = await processFile(walletsFile);
 
       switch (transactionType) {
         case "oneToOne":
@@ -257,9 +254,9 @@ function TransactionForm() {
         )}
       </form>
 
-      {savedHistory.length > 0 && (
-        <Button className='mt-2'>Ver Ultima Operación</Button>
-      )}
+      <div className='w-full mt-2'>
+        {savedHistory.length > 0 && <OperationHistory />}
+      </div>
     </Card>
   );
 }
