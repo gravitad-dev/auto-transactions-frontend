@@ -27,9 +27,11 @@ function App() {
   }, []);
 
   return (
-    <div className='grid grid-cols-1 lg:grid-cols-3 gap-4 p-4 bg-gray-100/20 min-h-[100vh]'>
+    <div className='grid grid-cols-1 lg:grid-cols-3 gap-4 px-4 bg-gray-100 h-[100vh]'>
       <div className='col-span-1 md:col-span-3'>
+        {/*
         <Card></Card>
+        */}
       </div>
 
       <div className='col-span-1'>

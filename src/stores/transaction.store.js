@@ -5,9 +5,13 @@ export const useTrasactionStore = create(
   persist(
     (set) => ({
       history: [],
-      setHistory: (value) =>
-        set((state) => ({ history: [...state.history, value] })),
+      savedHistory: [],
+      setHistory: (value) => {
+        set((state) => ({ history: [...state.history, value] }));
+        set((state) => ({ savedHistory: [...state.history] }));
+      },
       cleanHistory: () => set({ history: [] }),
+      cleanSavedHistory: () => set({ savedHistory: [] }),
     }),
     {
       name: "transactions-storage",

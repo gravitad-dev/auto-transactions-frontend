@@ -5,9 +5,13 @@ export const useWalletStore = create(
   persist(
     (set) => ({
       balances: [],
-      setBalance: (value) =>
-        set((state) => ({ balances: [...state.balances, value] })),
-      cleanBalance: () => set({ balances: [] }),
+      savedBalances: [],
+      setBalances: (value) => {
+        set((state) => ({ balances: [...state.balances, value] }));
+        set((state) => ({ savedBalances: [...state.balances] }));
+      },
+      cleanBalances: () => set({ balances: [] }),
+      cleanSavedBalances: () => set({ savedBalances: [] }),
     }),
     {
       name: "wallets-storage",

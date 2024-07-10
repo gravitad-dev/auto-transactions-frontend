@@ -17,6 +17,10 @@ function TransactionForm() {
   const history = useTrasactionStore((state) => state.history);
   const setHistory = useTrasactionStore((state) => state.setHistory);
   const cleanHistory = useTrasactionStore((state) => state.cleanHistory);
+  const savedHistory = useTrasactionStore((state) => state.savedHistory);
+  const cleanSavedHistory = useTrasactionStore(
+    (state) => state.cleanSavedHistory
+  );
 
   //form
   const [transactionType, setTransactionType] = useState("oneToOne");
@@ -30,16 +34,10 @@ function TransactionForm() {
   const [walletsFile, setWalletsFile] = useState(null);
   const [network, setNetwork] = useState(NETWORKS[0]);
 
+  //connect to socket
   useEffect(() => {
     socket.on("transactionUpdate", (transaction) => {
       setHistory(transaction);
-      toast({
-        variant: transaction.status == "Error" ? "destructive" : "default",
-        title: `Transacción a Wallet-ID: ${transaction.id} | ${
-          transaction.status
-        } ${transaction.status == "Success" && "✅"} `,
-        description: `Hash: ${transaction.hash?.slice(0, 20) || "error"}...`,
-      });
     });
 
     return () => {
@@ -47,12 +45,20 @@ function TransactionForm() {
     };
   }, []);
 
+  //status
   useEffect(() => {
     if (history.length > 0 && totalTransfers === history.length) {
+      console.log(savedHistory);
+      toast({
+        title: "Operación Finalizada ✅",
+        description: `${history.length} de ${totalTransfers}`,
+      });
+
       handleClean();
     }
-  }, [history, totalTransfers]);
+  }, [history]);
 
+  //-------------------------------------------------------------
   const handleNetChange = (event) => {
     const netValue = NETWORKS.find((net) => net.name == event.target.value);
     setNetwork(netValue);
@@ -67,7 +73,10 @@ function TransactionForm() {
     handleClean();
     event.preventDefault();
     if (!walletsFile) {
-      alert("Por favor, sube el json de las wallets.");
+      toast({
+        title: "Por favor, cargue el archivo JSON de wallets! ⚠️",
+        description: `No se encontro el archvio json`,
+      });
       return;
     }
 
@@ -106,18 +115,16 @@ function TransactionForm() {
       socket.emit("startTransaction", data);
 
       toast({
-        title: "Operación en progreso",
-        description: "",
+        title: "Operación en progreso ⌛",
+        description: `Transacciones a realizar: [ ${totalTransfers} ]`,
       });
     } catch (error) {
       toast({
-        title: "Un error inesperado ha ocurrido",
+        title: "¡Error al intentar realizar la operación! ❌",
         description: error.message,
       });
     }
   };
-
-  console.log({ totalTransfers, history });
 
   return (
     <Card title={"Hacer transaciones"}>
@@ -249,8 +256,22 @@ function TransactionForm() {
           </Skeleton>
         )}
       </form>
+
+      {savedHistory.length > 0 && (
+        <Button className='mt-2'>Ver Ultima Operación</Button>
+      )}
     </Card>
   );
 }
 
 export default TransactionForm;
+
+/*
+toast({
+  variant: transaction.status == "Error" ? "destructive" : "default",
+  title: `Transacción a Wallet-ID: ${transaction.id} | ${
+    transaction.status
+  } ${transaction.status == "Success" && "✅"} `,
+  description: `Hash: ${transaction.hash?.slice(0, 20) || "error"}...`,
+});
+*/
