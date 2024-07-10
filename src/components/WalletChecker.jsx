@@ -140,7 +140,7 @@ function WalletChecker() {
               Borrar Historial
             </Button>
           </div>
-          <div className='bg-gray-800 md:min-h-[500px] rounded-md flex flex-col gap-2 w-full text-white p-2 overflow-y-scroll'>
+          <div className='bg-gray-800 md:min-h-[420px] rounded-md flex flex-col gap-2 w-full text-white p-2 overflow-y-scroll'>
             {savedBalances.map((wallet) => (
               <div
                 key={wallet.address}
