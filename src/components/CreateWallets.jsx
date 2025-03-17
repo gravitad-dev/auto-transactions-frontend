@@ -11,7 +11,11 @@ function CreateWallets() {
   const handleCreate = () => {
     setIsDownloading(true);
 
-    fetch(`${import.meta.env.VITE_BACK_URL}/generateWallets?number=${numberOfWallets}`)
+    fetch(
+      `${
+        import.meta.env.VITE_BACK_URL
+      }/generateWallets?number=${numberOfWallets}`
+    )
       .then((response) => {
         if (response.ok) return response.blob();
         throw new Error("Network response was not ok.");
@@ -34,7 +38,7 @@ function CreateWallets() {
   };
 
   return (
-    <Card title={"Generador de wallets"}>
+    <Card title={"Generador de wallets. (Crea wallets en formato JSON)"}>
       <div className="flex flex-wrap items-center gap-2 mb-2">
         <input
           type="number"
