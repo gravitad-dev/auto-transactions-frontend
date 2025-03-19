@@ -19,7 +19,7 @@ export const NETWORKS = [
   },
   {
     name: "Sepolia",
-    rpcUrl: "https://sepolia.drpc.org",
+    rpcUrl: "https://sepolia.infura.io",
     chainId: 11155111,
     tokenName: "ETH",
   },
