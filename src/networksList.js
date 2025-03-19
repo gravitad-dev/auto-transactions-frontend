@@ -11,4 +11,10 @@ export const NETWORKS = [
     chainId: 2442,
     tokenName: "ETH",
   },
+  {
+    name: "Base Mainnet",
+    rpcUrl: "https://mainnet.base.org",
+    chainId: 8453,
+    tokenName: "ETH",
+  },
 ];
