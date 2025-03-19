@@ -13,7 +13,7 @@ export const NETWORKS = [
   },
   {
     name: "Base Mainnet",
-    rpcUrl: "https://mainnet.base.org",
+    rpcUrl: "https://base-mainnet.infura.io",
     chainId: 8453,
     tokenName: "ETH",
   },
