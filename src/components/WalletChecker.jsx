@@ -83,6 +83,7 @@ function WalletChecker() {
         rpcUrl: network.rpcUrl,
         chainId: network.chainId,
         tokenName: network.tokenName,
+        tokenAddress: network.tokenAddress || null,
       });
 
       toast({
@@ -99,20 +100,20 @@ function WalletChecker() {
 
   return (
     <Card title={"Comprobador de Saldo de Billeteras"}>
-      <div className='flex flex-col gap-8'>
+      <div className="flex flex-col gap-8">
         {/* FORM  */}
-        <form onSubmit={handleSubmit} className='flex flex-col w-full  gap-4'>
-          <div className='flex flex-col gap-1'>
+        <form onSubmit={handleSubmit} className="flex flex-col w-full  gap-4">
+          <div className="flex flex-col gap-1">
             <label>Archivo de Billeteras:</label>
-            <input type='file' onChange={handleFileChange} />
+            <input type="file" onChange={handleFileChange} />
           </div>
 
-          <div className='flex flex-col gap-1'>
+          <div className="flex flex-col gap-1">
             <label>Network:</label>
             <select
               value={network.name}
               onChange={handleNetChange}
-              className='border h-[40px] px-2'
+              className="border h-[40px] px-2"
             >
               {NETWORKS.map((net) => (
                 <option key={net.name} value={net.name}>
@@ -123,28 +124,28 @@ function WalletChecker() {
           </div>
 
           {balances.length == totalWallets ? (
-            <Button type='submit'>Comprobar</Button>
+            <Button type="submit">Comprobar</Button>
           ) : (
-            <Skeleton className='flex justify-center items-center w-full h-[40px] rounded-md'>
+            <Skeleton className="flex justify-center items-center w-full h-[40px] rounded-md">
               Consultando {balances.length} de {totalWallets}
             </Skeleton>
           )}
         </form>
 
         {/* LOG CONSOLE */}
-        <div className='flex flex-col gap-2 w-full max-h-[500px] md:max-h-[400px]'>
-          <div className='flex justify-between items-center'>
-            <h3 className='font-semibold'>Saldo de billeteras</h3>
+        <div className="flex flex-col gap-2 w-full max-h-[500px] md:max-h-[400px]">
+          <div className="flex justify-between items-center">
+            <h3 className="font-semibold">Saldo de billeteras</h3>
 
-            <Button onClick={cleanSavedBalances} className='bg-[#9E3030]'>
+            <Button onClick={cleanSavedBalances} className="bg-[#9E3030]">
               Borrar Historial
             </Button>
           </div>
-          <div className='bg-gray-800 md:min-h-[400px] rounded-md flex flex-col gap-2 w-full text-white p-2 overflow-y-scroll'>
+          <div className="bg-gray-800 md:min-h-[400px] rounded-md flex flex-col gap-2 w-full text-white p-2 overflow-y-scroll">
             {savedBalances.map((wallet) => (
               <div
                 key={wallet.address}
-                className=' bg-gray-700 rounded-sm p-2 '
+                className=" bg-gray-700 rounded-sm p-2 "
               >
                 <p>ID: {wallet.id}</p>
                 <p>Address: {wallet.address}</p>

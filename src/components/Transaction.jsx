@@ -107,6 +107,7 @@ function TransactionForm() {
         receiverIdStart: receiverIdStart,
         receiverIdEnd: receiverIdEnd,
         amount: amount,
+        tokenAddress: network.tokenAddress || null,
       };
 
       socket.emit("startTransaction", data);
@@ -125,13 +126,13 @@ function TransactionForm() {
 
   return (
     <Card title={"Hacer transaciones"}>
-      <form onSubmit={handleSubmit} className='flex flex-col w-full gap-4 '>
-        <div className='flex flex-col gap-1'>
+      <form onSubmit={handleSubmit} className="flex flex-col w-full gap-4 ">
+        <div className="flex flex-col gap-1">
           <label>Network:</label>
           <select
             value={network.name}
             onChange={handleNetChange}
-            className='border h-[40px] px-2'
+            className="border h-[40px] px-2"
           >
             {NETWORKS.map((net) => (
               <option key={net.name} value={net.name}>
@@ -144,29 +145,29 @@ function TransactionForm() {
         <select
           value={transactionType}
           onChange={(e) => setTransactionType(e.target.value)}
-          className='border h-[40px] px-2'
+          className="border h-[40px] px-2"
         >
-          <option value='oneToOne'>Uno a Uno</option>
-          <option value='oneToMany'>Uno a Muchos</option>
-          <option value='manyToOne'>Muchos a Uno</option>
+          <option value="oneToOne">Uno a Uno</option>
+          <option value="oneToMany">Uno a Muchos</option>
+          <option value="manyToOne">Muchos a Uno</option>
         </select>
 
         {transactionType === "oneToOne" && (
           <>
             <input
-              type='number'
+              type="number"
               value={senderId}
               onChange={(e) => setSenderId(e.target.value)}
-              placeholder='ID del Emisor'
-              className='border h-[40px] px-4'
+              placeholder="ID del Emisor"
+              className="border h-[40px] px-4"
               required
             />
             <input
-              type='number'
+              type="number"
               value={receiverId}
               onChange={(e) => setReceiverId(e.target.value)}
-              placeholder='ID del Receptor'
-              className='border h-[40px] px-4'
+              placeholder="ID del Receptor"
+              className="border h-[40px] px-4"
               required
             />
           </>
@@ -175,27 +176,27 @@ function TransactionForm() {
         {transactionType === "oneToMany" && (
           <>
             <input
-              type='number'
+              type="number"
               value={senderId}
               onChange={(e) => setSenderId(e.target.value)}
-              placeholder='ID del Emisor'
-              className='border h-[40px] px-4'
+              placeholder="ID del Emisor"
+              className="border h-[40px] px-4"
               required
             />
             <input
-              type='number'
+              type="number"
               value={receiverIdStart}
               onChange={(e) => setReceiverIdStart(e.target.value)}
-              placeholder='Inicio de ID de Receptores'
-              className='border h-[40px] px-4'
+              placeholder="Inicio de ID de Receptores"
+              className="border h-[40px] px-4"
               required
             />
             <input
-              type='number'
+              type="number"
               value={receiverIdEnd}
               onChange={(e) => setReceiverIdEnd(e.target.value)}
-              placeholder='Fin de ID de Receptores'
-              className='border h-[40px] px-4'
+              placeholder="Fin de ID de Receptores"
+              className="border h-[40px] px-4"
               required
             />
           </>
@@ -204,57 +205,57 @@ function TransactionForm() {
         {transactionType === "manyToOne" && (
           <>
             <input
-              type='number'
+              type="number"
               value={senderIdStart}
               onChange={(e) => setSenderIdStart(e.target.value)}
-              placeholder='Inicio de ID de Emisores'
-              className='border h-[40px] px-4'
+              placeholder="Inicio de ID de Emisores"
+              className="border h-[40px] px-4"
               required
             />
             <input
-              type='number'
+              type="number"
               value={senderIdEnd}
               onChange={(e) => setSenderIdEnd(e.target.value)}
-              placeholder='Fin de ID de Emisores'
-              className='border h-[40px] px-4'
+              placeholder="Fin de ID de Emisores"
+              className="border h-[40px] px-4"
               required
             />
             <input
-              type='number'
+              type="number"
               value={receiverId}
               onChange={(e) => setReceiverId(e.target.value)}
-              placeholder='ID del Receptor'
-              className='border h-[40px] px-4'
+              placeholder="ID del Receptor"
+              className="border h-[40px] px-4"
               required
             />
           </>
         )}
 
         <input
-          type='number'
+          type="number"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
-          placeholder='Cantidad'
-          step='0.01'
-          className='border h-[40px] px-4'
+          placeholder="Cantidad"
+          step="0.01"
+          className="border h-[40px] px-4"
           required
         />
         <input
-          type='file'
+          type="file"
           onChange={(e) => setWalletsFile(e.target.files[0])}
           required
         />
 
         {totalTransfers == history.length ? (
-          <Button type='submit'>Enviar</Button>
+          <Button type="submit">Enviar</Button>
         ) : (
-          <Skeleton className='flex justify-center items-center w-full h-[40px] rounded-md'>
+          <Skeleton className="flex justify-center items-center w-full h-[40px] rounded-md">
             {`Realizadas ${history.length} de ${totalTransfers}`}
           </Skeleton>
         )}
       </form>
 
-      <div className='w-full mt-2'>
+      <div className="w-full mt-2">
         {savedHistory.length > 0 && <OperationHistory />}
       </div>
     </Card>
