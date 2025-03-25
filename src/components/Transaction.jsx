@@ -8,6 +8,7 @@ import { useTrasactionStore } from "../stores/transaction.store";
 import { Skeleton } from "@/components/ui/skeleton";
 import { processFile } from "../utils";
 import io from "socket.io-client";
+import { useConfigStore } from "../stores/config.store";
 
 const socket = io(import.meta.env.VITE_BACK_URL);
 
@@ -30,8 +31,12 @@ function TransactionForm() {
   const [receiverIdStart, setReceiverIdStart] = useState("");
   const [receiverIdEnd, setReceiverIdEnd] = useState("");
   const [amount, setAmount] = useState("");
-  const [walletsFile, setWalletsFile] = useState(null);
-  const [network, setNetwork] = useState(NETWORKS[0]);
+  //const [walletsFile, setWalletsFile] = useState(null);
+
+  const file = useConfigStore((state) => state.file);
+  const network = useConfigStore((state) => state.network);
+
+  //const [network, setNetwork] = useState(NETWORKS[0]);
 
   //connect to socket
   useEffect(() => {
@@ -70,16 +75,17 @@ function TransactionForm() {
   const handleSubmit = async (event) => {
     handleClean();
     event.preventDefault();
-    if (!walletsFile) {
+    if (!file || !network?.rpcUrl) {
       toast({
-        title: "Por favor, cargue el archivo JSON de wallets! ⚠️",
-        description: `No se encontro el archvio json`,
+        title: "Archivo de wallets o Network no configurados ⚠️",
+        description:
+          "Revisa el configurador. No se encontró archivo JSON o la network es inválida.",
       });
       return;
     }
 
     try {
-      const walletFile = await processFile(walletsFile);
+      const walletFile = await processFile(file);
 
       switch (transactionType) {
         case "oneToOne":
@@ -127,6 +133,8 @@ function TransactionForm() {
   return (
     <Card title={"Hacer transaciones"}>
       <form onSubmit={handleSubmit} className="flex flex-col w-full gap-4 ">
+        {/*
+        
         <div className="flex flex-col gap-1">
           <label>Network:</label>
           <select
@@ -141,6 +149,8 @@ function TransactionForm() {
             ))}
           </select>
         </div>
+        
+        */}
 
         <select
           value={transactionType}
@@ -240,18 +250,24 @@ function TransactionForm() {
           className="border h-[40px] px-4"
           required
         />
-        <input
+        {/* <input
           type="file"
           onChange={(e) => setWalletsFile(e.target.files[0])}
           required
-        />
+        /> */}
 
-        {totalTransfers == history.length ? (
+        {/* Botón o Skeleton de progreso */}
+        {totalTransfers === 0 ? (
+          // No hay transacciones en curso -> botón
           <Button type="submit">Enviar</Button>
-        ) : (
+        ) : history.length < totalTransfers ? (
+          // Transacciones en progreso -> skeleton
           <Skeleton className="flex justify-center items-center w-full h-[40px] rounded-md">
             {`Realizadas ${history.length} de ${totalTransfers}`}
           </Skeleton>
+        ) : (
+          // Terminó -> volver a mostrar botón (o lo que quieras)
+          <Button type="submit">Enviar</Button>
         )}
       </form>
 

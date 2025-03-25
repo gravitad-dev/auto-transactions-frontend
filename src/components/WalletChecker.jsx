@@ -7,16 +7,18 @@ import { NETWORKS } from "../networksList";
 import { useWalletStore } from "../stores/wallet.store";
 import { processFile } from "../utils";
 import io from "socket.io-client";
+import { useConfigStore } from "../stores/config.store";
 
 const socket = io(import.meta.env.VITE_BACK_URL);
 
 function WalletChecker() {
   const { toast } = useToast();
-  const [file, setFile] = useState(null);
-  const [network, setNetwork] = useState(NETWORKS[0]);
   const [totalWallets, setTotalWallets] = useState(0);
 
   //store
+  const file = useConfigStore((state) => state.file);
+  const network = useConfigStore((state) => state.network);
+
   const balances = useWalletStore((state) => state.balances);
   const setBalances = useWalletStore((state) => state.setBalances);
   const savedBalances = useWalletStore((state) => state.savedBalances);
@@ -49,15 +51,6 @@ function WalletChecker() {
   }, [balances]);
 
   //handler functions
-  const handleFileChange = (event) => {
-    setFile(event.target.files[0]);
-  };
-
-  const handleNetChange = (event) => {
-    const netValue = NETWORKS.find((net) => net.name == event.target.value);
-    setNetwork(netValue);
-  };
-
   const handleClean = () => {
     setTotalWallets(0);
     cleanBalances();
@@ -103,6 +96,7 @@ function WalletChecker() {
       <div className="flex flex-col gap-8">
         {/* FORM  */}
         <form onSubmit={handleSubmit} className="flex flex-col w-full  gap-4">
+          {/*
           <div className="flex flex-col gap-1">
             <label>Archivo de Billeteras:</label>
             <input type="file" onChange={handleFileChange} />
@@ -122,18 +116,21 @@ function WalletChecker() {
               ))}
             </select>
           </div>
+          */}
 
-          {balances.length == totalWallets ? (
+          {totalWallets === 0 ? (
             <Button type="submit">Comprobar</Button>
-          ) : (
+          ) : balances.length < totalWallets ? (
             <Skeleton className="flex justify-center items-center w-full h-[40px] rounded-md">
               Consultando {balances.length} de {totalWallets}
             </Skeleton>
+          ) : (
+            <Button type="submit">Comprobar</Button>
           )}
         </form>
 
         {/* LOG CONSOLE */}
-        <div className="flex flex-col gap-2 w-full max-h-[500px] md:max-h-[400px]">
+        <div className="flex flex-col gap-2 w-full max-h-[500px] md:max-h-[450px]">
           <div className="flex justify-between items-center">
             <h3 className="font-semibold">Saldo de billeteras</h3>
 

@@ -38,13 +38,14 @@ function CreateWallets() {
   };
 
   return (
-    <Card title={"Generador de wallets. (Crea wallets en formato JSON)"}>
+    <Card title={"Generador de wallets. (Max 100)"}>
       <div className="flex flex-wrap items-center gap-2 mb-2">
         <input
           type="number"
           value={numberOfWallets}
           onChange={(e) => setNumberOfWallets(e.target.value)}
           min="1"
+          max={100}
           className="h-[40px] border px-2 w-full"
         />
         <Button onClick={handleCreate} className={"w-full"}>

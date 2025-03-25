@@ -5,6 +5,7 @@ import WalletChecker from "@/components/WalletChecker";
 import Card from "./components/Card";
 import { Toaster } from "@/components/ui/toaster";
 import io from "socket.io-client";
+import { Config } from "./components/Config";
 
 //MAIN APP
 function App() {
@@ -25,21 +26,31 @@ function App() {
   }, []);
 
   return (
-    <div className='grid grid-cols-1 lg:grid-cols-3 gap-4 px-4 bg-gray-100 h-auto md:h-[100vh]'>
-      <div className='col-span-1 md:col-span-3'>
-        {/*
-        <Card></Card>
-        */}
+    <div className="relative flex justify-center items-start md:items-center p-4 md:py-2  w-full h-[100vh] overflow-y-scroll bg-gray-100">
+      <div className="grid grid-cols-1 lg:grid-cols-6 gap-4  max-w-[1500px]">
+        <div className="flex lg:hidden col-span-1 lg:col-span-3">
+          <h1 className="text-3xl font-semibold">Autransaction</h1>
+          <p className="pl-2">v1.2</p>
+        </div>
+
+        <div className="col-span-1 lg:col-span-3">
+          <Config />
+        </div>
+
+        <div className="col-span-1 lg:col-span-3">
+          <CreateWallets />
+        </div>
+
+        <div className="col-span-1 lg:col-span-2 row-span-2">
+          <Transaction />
+        </div>
+        <div className="col-span-1 lg:col-span-4 row-span-2">
+          <WalletChecker />
+        </div>
       </div>
 
-      <div className='col-span-1'>
-        <CreateWallets />
-      </div>
-      <div className='col-span-1 md:col-span-2 row-span-2 '>
-        <WalletChecker />
-      </div>
-      <div className='col-span-1 row-span-1 '>
-        <Transaction />
+      <div className="absolute bottom-1 right-2 bg-gray-100 flex justify-center items-center">
+        <p className="text-sm text-gray-500">Autransaction v1.2</p>
       </div>
       <Toaster />
     </div>
